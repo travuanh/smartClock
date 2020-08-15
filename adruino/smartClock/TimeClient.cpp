@@ -89,10 +89,13 @@ void TimeClient::loop() {
   if((unsigned long)(millis() - timeUpdate)>1000){ //100ms
     timeUpdate = millis();
     timeCount++;
-    if(timeCount > MAX_TIME_UPDATE){
+    if(timeCount > MAX_TIME_UPDATE){ // only update when boot complete
       timeCount = 0;
       updateTime();
+    }else if (timeCount == MAX_TIME_UPDATE){
+      timeCount = 0;
     }
+
     if (!Rtc.IsDateTimeValid()){
       if (Rtc.LastError() != 0){
         // we have a communications error

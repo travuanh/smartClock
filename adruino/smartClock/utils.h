@@ -15,9 +15,10 @@
 //#define OFF     0
 
 
-#define  PRINT_CALLBACK 1
+#define  PRINT_CALLBACK 0
 //#define DEBUG 1
 #define LED_HEARTBEAT 1
+#define HB_LED  LED_BUILTIN//D2
 
 #if DEBUG
 #define PRINT(s, v) { Serial.print(F(s)); Serial.print(v); }
@@ -29,7 +30,6 @@
 
 
 #if LED_HEARTBEAT
-#define HB_LED  LED_BUILTIN//D2
 #define HB_LED_TIME 500 // in milliseconds
 #endif
 
@@ -42,7 +42,14 @@
 #define DATA_PIN  D7 // or MOSI
 #define CS_PIN    D8 // or SS
 
-#define MAX_DISPLAY_TIME  15 // secs
+#define MAX_DISPLAY_TIME  45 // secs
 #define MAX_DISPLAY_DATE  5 //secs
 #define MAX_DISPLAY_TEMP  5 //secs
+#define MAX_DISPLAY_IDLE  5 //secs
+#define MAX_DISPLAY_DELAY -3 //secs
+
+
+#define MAX_TIME_TO_CONNECT_WIFI 15*60 //15 mins
+
+#define MAX_TIME_TO_CONFIG_WIFI 10 //180 secs
 #endif /* UTILS_H_ */
