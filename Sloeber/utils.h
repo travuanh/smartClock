@@ -9,10 +9,10 @@
 #define UTILS_H_
 #include "Arduino.h"
 
-#define MYESP       "MyClock"
+#define MYESP 			"MyClock"
 
-//#define ON      1
-//#define OFF     0
+//#define ON 			1
+//#define OFF			0
 
 
 #define  PRINT_CALLBACK 0
@@ -48,8 +48,8 @@
 #define MAX_DISPLAY_IDLE  5 //secs
 #define MAX_DISPLAY_DELAY -3 //secs
 
-
 #define MAX_TIME_TO_CONNECT_WIFI 15*60 //15 mins
 
-#define MAX_TIME_TO_CONFIG_WIFI 120 //180 secs
+#define MAX_TIME_TO_CONFIG_WIFI 180 //180 secs
+
 #endif /* UTILS_H_ */

@@ -275,13 +275,10 @@ void scrollDataSink(uint8_t dev, MD_MAX72XX::transformType_t t, uint8_t col)
 //      sprintf(newMessage," %s", "");
       switch (eDisplayState){
           case S_IDLE:
-      //prepair data
 
         break;
 
       case S_ALERT:
-      //print online msg
-//      eDisplayState = S_IDLE;
 
         break;
 
@@ -289,26 +286,24 @@ void scrollDataSink(uint8_t dev, MD_MAX72XX::transformType_t t, uint8_t col)
         //print time
         if((col!=0)){
           isRunning = false;
+          newMessageAvailable = true;
         }
 
         break;
 
     case S_DATE:
       //print date
-//      if(col!=0)
-//        timeDisplayCount = 0;
+
       break;
 
     case S_TEMP:
       //print date
-//      if(col!=0)
-//        timeDisplayCount = 0;
+
       break;
 
     case S_UPDATE:
       //print info
-//      if(col!=0)
-//        timeDisplayCount = 0;
+
       break;
 
     default:
@@ -492,7 +487,7 @@ void setup_wifi() {
   Serial.println("WiFi connected");
   Serial.println("IP address: ");
   Serial.println(WiFi.localIP());
-  devID = "myGarden_" + WiFi.macAddress();
+  devID = "myClock_" + WiFi.macAddress();
   Serial.println(devID);
   //or use this for auto generated name ESP + ChipID
   //wifiManager.autoConnect();
@@ -551,16 +546,10 @@ void timerCallback(){
      case S_TIME:
          //print time
        PRINT("\nS_TIME: ", eDisplayState);
-//       if(newRound){
-//         newRound = false;
-//         eDisplayState = S_IDLE;
-//         timeDisplayCount = MAX_DISPLAY_IDLE;
-//         return;
-//
-//       }
        blink = !blink;
        if(timeDisplayCount == 0)
          blink = true;
+
        if(!blink){
         sprintf(newMessage," %02d %02d", timeClient.getHour(), timeClient.getMins());
        }else{

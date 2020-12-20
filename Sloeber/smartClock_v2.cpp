@@ -1,3 +1,5 @@
+// Do not remove the include below
+#include "smartClock_v2.h"
 
 // IP address for the ESP8266 is displayed on the scrolling display
 // after startup initialisation and connected to the WiFi network.
@@ -272,43 +274,43 @@ void scrollDataSink(uint8_t dev, MD_MAX72XX::transformType_t t, uint8_t col)
   Serial.print(' ');
   Serial.println(col);
 #endif
-//  	  sprintf(newMessage," %s", "");
-  	  switch (eDisplayState){
-  	  	  case S_IDLE:
+//      sprintf(newMessage," %s", "");
+      switch (eDisplayState){
+          case S_IDLE:
 
-			  break;
+        break;
 
-		  case S_ALERT:
+      case S_ALERT:
 
-			  break;
+        break;
 
-		  case S_TIME:
-				//print time
-				if((col!=0)){
-					isRunning = false;
-					newMessageAvailable = true;
-				}
+      case S_TIME:
+        //print time
+        if((col!=0)){
+          isRunning = false;
+          newMessageAvailable = true;
+        }
 
-				break;
+        break;
 
-		case S_DATE:
-			//print date
+    case S_DATE:
+      //print date
 
-			break;
+      break;
 
-		case S_TEMP:
-			//print date
+    case S_TEMP:
+      //print date
 
-			break;
+      break;
 
-		case S_UPDATE:
-			//print info
+    case S_UPDATE:
+      //print info
 
-			break;
+      break;
 
-		default:
-			eDisplayState = S_IDLE;
-	}
+    default:
+      eDisplayState = S_IDLE;
+  }
 }
 
 uint8_t scrollDataSource(uint8_t dev, MD_MAX72XX::transformType_t t)
@@ -431,7 +433,7 @@ void printText(uint8_t modStart, uint8_t modEnd, char *pMsg)
         state++;
         // fall through
 
-      case 3:	// display inter-character spacing or end of message padding (blank columns)
+      case 3: // display inter-character spacing or end of message padding (blank columns)
         mx.setColumn(col--, 0);
         curLen++;
         if (curLen == showLen)
@@ -449,225 +451,226 @@ void printText(uint8_t modStart, uint8_t modEnd, char *pMsg)
 
 
 void setup_wifi() {
-	delay(10);
-	Serial.println();
+  delay(10);
+  Serial.println();
 /***************************************************************************************************/
-	// put your setup code here, to run once:
-	//WiFiManager
-	//Local intialization. Once its business is done, there is no need to keep it around
-	WiFiManager wifiManager;
-	//reset saved settings
-	//wifiManager.resetSettings();
+  // put your setup code here, to run once:
+  //WiFiManager
+  //Local intialization. Once its business is done, there is no need to keep it around
+  WiFiManager wifiManager;
+  //reset saved settings
+  //wifiManager.resetSettings();
 
-	//set custom ip for portal
-	//wifiManager.setAPStaticIPConfig(IPAddress(10,0,1,1), IPAddress(10,0,1,1), IPAddress(255,255,255,0));
+  //set custom ip for portal
+  //wifiManager.setAPStaticIPConfig(IPAddress(10,0,1,1), IPAddress(10,0,1,1), IPAddress(255,255,255,0));
 
-	//sets timeout until configuration portal gets turned off
-	//useful to make it all retry or go to sleep
-	//in seconds
-	wifiManager.setTimeout(MAX_TIME_TO_CONFIG_WIFI);//180
+  //sets timeout until configuration portal gets turned off
+  //useful to make it all retry or go to sleep
+  //in seconds
+  wifiManager.setTimeout(MAX_TIME_TO_CONFIG_WIFI);//180
 
-	//fetches ssid and pass from eeprom and tries to connect
-	//if it does not connect it starts an access point with the specified name
-	//here  "AutoConnectAP"
-	//and goes into a blocking loop awaiting configuration
-//	wifiManager.autoConnect(MYESP);
-	//fetches ssid and pass and tries to connect
-	//if it does not connect it starts an access point with the specified name
-	//here  "AutoConnectAP"
-	//and goes into a blocking loop awaiting configuration
-	if(!wifiManager.autoConnect(MYESP)) {
-		Serial.println("failed to connect and hit timeout");
-//		delay(3000);
-		//reset and try again, or maybe put it to deep sleep
-//		ESP.reset();
-		delay(5000);
-	}
-	Serial.println("");
-	Serial.println("WiFi connected");
-	Serial.println("IP address: ");
-	Serial.println(WiFi.localIP());
-	devID = "myClock_" + WiFi.macAddress();
-	Serial.println(devID);
-	//or use this for auto generated name ESP + ChipID
-	//wifiManager.autoConnect();
+  //fetches ssid and pass from eeprom and tries to connect
+  //if it does not connect it starts an access point with the specified name
+  //here  "AutoConnectAP"
+  //and goes into a blocking loop awaiting configuration
+//  wifiManager.autoConnect(MYESP);
+  //fetches ssid and pass and tries to connect
+  //if it does not connect it starts an access point with the specified name
+  //here  "AutoConnectAP"
+  //and goes into a blocking loop awaiting configuration
+  if(!wifiManager.autoConnect(MYESP)) {
+    Serial.println("failed to connect and hit timeout");
+//    delay(3000);
+    //reset and try again, or maybe put it to deep sleep
+//    ESP.reset();
+    delay(5000);
+  }
+  Serial.println("");
+  Serial.println("WiFi connected");
+  Serial.println("IP address: ");
+  Serial.println(WiFi.localIP());
+  devID = "myClock_" + WiFi.macAddress();
+  Serial.println(devID);
+  //or use this for auto generated name ESP + ChipID
+  //wifiManager.autoConnect();
 }
 
 
 
 
 void display(){
-	if(secondTick){
-		secondTick = false;
-	}
+  if(secondTick){
+    secondTick = false;
+  }
 
-	if(isRunning){
-		scrollText();
-	}else{
-		if (newMessageAvailable){  // there is a new message waiting
-		  strcpy(curMessage, newMessage); // copy it in
-		  newMessageAvailable = false;
-		  printText(0, MAX_DEVICES -1 , curMessage);
-		}
-	}
+  if(isRunning){
+    scrollText();
+  }else{
+    if (newMessageAvailable){  // there is a new message waiting
+      strcpy(curMessage, newMessage); // copy it in
+      newMessageAvailable = false;
+      printText(0, MAX_DEVICES -1 , curMessage);
+    }
+  }
 
 
 }
 
 void timerCallback(){
 #if DEBUG
-//	Serial.println("-> timerCallback() ");
+//  Serial.println("-> timerCallback() ");
 #endif
-	secondTick = true;
-	timeConnectWifi++;
-	if(timeConnectWifi > MAX_TIME_TO_CONNECT_WIFI){
-		timeConnectWifi = 0;
-		if (WiFi.isConnected()){
-			WiFi.disconnect();
-		}
-	}
-	switch (eDisplayState){
-		 case S_IDLE:
-				 //prepair data
-			 PRINT("\nS_IDLE: ", eDisplayState);
-			 if(timeDisplayCount<0){
-				 timeDisplayCount++;
-			 }else{
-				 timeDisplayCount = 0;
-				 eDisplayState = S_TIME;
-			 }
-			 isRunning = true;
-			 break;
+  secondTick = true;
+  timeConnectWifi++;
+  if(timeConnectWifi > MAX_TIME_TO_CONNECT_WIFI){
+    timeConnectWifi = 0;
+    if (WiFi.isConnected()){
+      WiFi.disconnect();
+    }
+  }
+  switch (eDisplayState){
+     case S_IDLE:
+         //prepair data
+       PRINT("\nS_IDLE: ", eDisplayState);
+       if(timeDisplayCount<0){
+         timeDisplayCount++;
+       }else{
+         timeDisplayCount = 0;
+         eDisplayState = S_TIME;
+       }
+       isRunning = true;
+       break;
 
-		 case S_ALERT:
-				 //print online msg
-			 break;
+     case S_ALERT:
+         //print online msg
+       break;
 
-		 case S_TIME:
-				 //print time
-			 PRINT("\nS_TIME: ", eDisplayState);
-			 blink = !blink;
-			 if(timeDisplayCount == 0)
-				 blink = true;
+     case S_TIME:
+         //print time
+       PRINT("\nS_TIME: ", eDisplayState);
+       blink = !blink;
+       if(timeDisplayCount == 0)
+         blink = true;
 
-			 if(!blink){
-				sprintf(newMessage," %02d %02d", timeClient.getHour(), timeClient.getMins());
-			 }else{
-				sprintf(newMessage," %02d:%02d", timeClient.getHour(), timeClient.getMins());
-			 }
-			 newMessageAvailable = true;
-			 timeDisplayCount++;
-			 if(timeDisplayCount>= MAX_DISPLAY_TIME){
-				 timeDisplayCount = 0;
-				 eDisplayState = S_DATE;
-				 sprintf(newMessage," %s", timeClient.getFmTime().c_str());
-				 newMessageAvailable = true;
-				 isRunning = true;
-			 }
-			 break;
+       if(!blink){
+        sprintf(newMessage," %02d %02d", timeClient.getHour(), timeClient.getMins());
+       }else{
+        sprintf(newMessage," %02d:%02d", timeClient.getHour(), timeClient.getMins());
+       }
+       newMessageAvailable = true;
+       timeDisplayCount++;
+       if(timeDisplayCount>= MAX_DISPLAY_TIME){
+         timeDisplayCount = 0;
+         eDisplayState = S_DATE;
+         sprintf(newMessage," %s", timeClient.getFmTime().c_str());
+         newMessageAvailable = true;
+         isRunning = true;
+       }
+       break;
 
-		 case S_DATE:
-			 //print date
-			 PRINT("\nS_DATE: ", eDisplayState);
-			 sprintf(newMessage," %s", timeClient.getFmTime().c_str());
-			 newMessageAvailable = true;
-			 timeDisplayCount++;
-			 if(timeDisplayCount>= MAX_DISPLAY_DATE){
-				 timeDisplayCount = 0;
-				 eDisplayState = S_TEMP;
-				 sprintf(newMessage," %s", timeClient.getTemp().c_str());
-				 newMessageAvailable = true;
-				 isRunning = true;
- //				 scrollText();
-			 }
-			 break;
+     case S_DATE:
+       //print date
+       PRINT("\nS_DATE: ", eDisplayState);
+       sprintf(newMessage," %s", timeClient.getFmTime().c_str());
+       newMessageAvailable = true;
+       timeDisplayCount++;
+       if(timeDisplayCount>= MAX_DISPLAY_DATE){
+         timeDisplayCount = 0;
+         eDisplayState = S_TEMP;
+         sprintf(newMessage," %s", timeClient.getTemp().c_str());
+         newMessageAvailable = true;
+         isRunning = true;
+ //        scrollText();
+       }
+       break;
 
-		 case S_TEMP:
-			 PRINT("\nS_TEMP: ", eDisplayState);
-			 sprintf(newMessage," %s", timeClient.getTemp().c_str());
-			 newMessageAvailable = true;
-			 timeDisplayCount++;
-			 if(timeDisplayCount>= MAX_DISPLAY_TEMP){
-				 timeDisplayCount = MAX_DISPLAY_DELAY;
-				 eDisplayState = S_IDLE;
-//				 sprintf(newMessage," %s", "");
-				 sprintf(newMessage," %02d:%02d", timeClient.getHour(), timeClient.getMins());
-				 newMessageAvailable = true;
-				 isRunning = true;
-			 }
-			 break;
+     case S_TEMP:
+       PRINT("\nS_TEMP: ", eDisplayState);
+       sprintf(newMessage," %s", timeClient.getTemp().c_str());
+       newMessageAvailable = true;
+       timeDisplayCount++;
+       if(timeDisplayCount>= MAX_DISPLAY_TEMP){
+         timeDisplayCount = MAX_DISPLAY_DELAY;
+         eDisplayState = S_IDLE;
+//         sprintf(newMessage," %s", "");
+         sprintf(newMessage," %02d:%02d", timeClient.getHour(), timeClient.getMins());
+         newMessageAvailable = true;
+         isRunning = true;
+       }
+       break;
 
-		 case S_UPDATE:
-			 PRINT("\nS_UPDATE: ", eDisplayState);
-			 //print info
-			 break;
+     case S_UPDATE:
+       PRINT("\nS_UPDATE: ", eDisplayState);
+       //print info
+       break;
 
-		 default:
-			 eDisplayState = S_IDLE;
+     default:
+       eDisplayState = S_IDLE;
 
-		 }
+     }
 
 }
 
 void setup()
 {
 #if DEBUG
-	Serial.begin(115200);
-	PRINTS("\n[MD_MAX72XX WiFi Message Display]\nType a message for the scrolling display from your internet browser");
+  Serial.begin(115200);
+  PRINTS("\n[MD_MAX72XX WiFi Message Display]\nType a message for the scrolling display from your internet browser");
 #endif
 
 #if LED_HEARTBEAT
-	pinMode(HB_LED, OUTPUT);
-	digitalWrite(HB_LED, LOW);
+  pinMode(HB_LED, OUTPUT);
+  digitalWrite(HB_LED, LOW);
 #endif
 
-	delay(10);
+  delay(10);
 
 #if DEBUG
-	Serial.println("-> DEBUG MODE!!!");
+  Serial.println("-> DEBUG MODE!!!");
 #endif
 
 
-	// Display initialisation
-	mx.begin();
-	mx.setShiftDataInCallback(scrollDataSource);
-	mx.setShiftDataOutCallback(scrollDataSink);
+  // Display initialisation
+  mx.begin();
+  mx.setShiftDataInCallback(scrollDataSource);
+  mx.setShiftDataOutCallback(scrollDataSink);
 
-	curMessage[0] = newMessage[0] = '\0';
+  curMessage[0] = newMessage[0] = '\0';
 
-	printText(0, MAX_DEVICES -1 , "  ***  ");
-	setup_wifi();
+  printText(0, MAX_DEVICES -1 , "  ***  ");
+  setup_wifi();
 
-	// Connect to and initialize WiFi network
-	PRINT("\nConnecting to ", ssid);
+  // Connect to and initialize WiFi network
+  PRINT("\nConnecting to ", ssid);
 
-	timeClient.setup(ntpUDP);
-	timeClient.setCallback(timerCallback);
+  timeClient.setup(ntpUDP);
+  timeClient.setCallback(timerCallback);
 
-	printText(0, MAX_DEVICES -1 , "");
-	// Start the server
-//	server.begin();
+  printText(0, MAX_DEVICES -1 , "");
+  // Start the server
+//  server.begin();
 
 
 }
 void loop()
 {
-	if(WiFi.isConnected()){
-	#if LED_HEARTBEAT
-//		static uint32_t timeLast = 0;
+  if(WiFi.isConnected()){
+  #if LED_HEARTBEAT
+//    static uint32_t timeLast = 0;
 //
-//		if (millis() - timeLast >= HB_LED_TIME)	{
-//			digitalWrite(HB_LED, digitalRead(HB_LED) == LOW ? HIGH : LOW);
-//			timeLast = millis();
-//		}
-		digitalWrite(HB_LED, LOW);
-	#endif
-//		handleWiFi();
-	}
-	else{
-		digitalWrite(HB_LED, HIGH);
-	}
-	timeClient.loop();
-	display();
-//	scrollText();
+//    if (millis() - timeLast >= HB_LED_TIME) {
+//      digitalWrite(HB_LED, digitalRead(HB_LED) == LOW ? HIGH : LOW);
+//      timeLast = millis();
+//    }
+    digitalWrite(HB_LED, LOW);
+  #endif
+//    handleWiFi();
+  }
+  else{
+    digitalWrite(HB_LED, HIGH);
+  }
+  timeClient.loop();
+  display();
+//  scrollText();
 }
+

@@ -34,6 +34,7 @@ uint32_t timeCount = MAX_TIME_UPDATE;
 bool isCalled = false;
 
 
+
 TimeClient::TimeClient() {
   this->enableTimer = false;
   this->hourSet = 0;
@@ -89,12 +90,14 @@ void TimeClient::loop() {
   if((unsigned long)(millis() - timeUpdate)>1000){ //100ms
     timeUpdate = millis();
     timeCount++;
-    if(timeCount > MAX_TIME_UPDATE){ // only update when boot complete
+    if(timeCount >= MAX_TIME_UPDATE){ // update when boot complete
       timeCount = 0;
       updateTime();
-    }else if (timeCount == MAX_TIME_UPDATE){
-      timeCount = 0;
     }
+//    else if (timeCount == MAX_TIME_UPDATE){
+//      timeCount = 0;
+//    }
+
 
     if (!Rtc.IsDateTimeValid()){
       if (Rtc.LastError() != 0){
@@ -110,6 +113,7 @@ void TimeClient::loop() {
         Serial.println("RTC lost confidence in the DateTime!");
       }
     }
+
     RtcDateTime now = Rtc.GetDateTime();
     printDateTime(now);
 //    Serial.println();
@@ -121,16 +125,9 @@ void TimeClient::loop() {
           PSTR("%02f"),
           temp.AsFloatDegC());
     this->temp = String(strTmp) + "C";
-    callback();
+    callback(); // only callback after 1 second
+
   }
-
-//  temp.Print(Serial);
-  // you may also get the temperature as a float and print it
-  // Serial.print(temp.AsFloatDegC());
-//  Serial.print(strTmp);
-//  Serial.println("C");
-
-//  delay(10000); // ten seconds
 
 
 }
@@ -142,6 +139,7 @@ void TimeClient::setTimer(uint8_t hh, uint8_t mins) {
 }
 
 void TimeClient::updateTime() {
+  Serial.println("-> TimeClient::updateTime()" );
   bool isUpdated = timeClient->update();
 
   setDayOfWeek(daysOfTheWeek[timeClient->getDay()]);
@@ -150,6 +148,7 @@ void TimeClient::updateTime() {
   setSec(timeClient->getSeconds());
   setFmTime(timeClient->getFormattedTime());
 
+  Serial.print("TimeClient Time: ");
   Serial.print(dayOfWeek);
   Serial.print(", ");
   Serial.print(hour);
@@ -158,6 +157,7 @@ void TimeClient::updateTime() {
   Serial.print(":");
   Serial.println(sec);
 
+  Serial.print("fmTime: ");
   Serial.println(fmTime);
 
   unsigned long epochTime = timeClient->getEpochTime();
@@ -190,9 +190,16 @@ void TimeClient::updateTime() {
 
   Serial.println("");
   RtcDateTime dt = Rtc.GetDateTime();
-  if((hour!=dt.Hour())&&(mins!=dt.Minute())){
-    RtcDateTime compiled = RtcDateTime(currentYear,currentMonth,monthDay,hour,mins,sec);
+  Serial.print("RTC Time: ");
+  Serial.print(dt.Hour());
+  Serial.print(":");
+  Serial.print(dt.Minute());
+  Serial.print(":");
+  Serial.println(dt.Second());
+
+  if((hour!=dt.Hour())||(mins!=dt.Minute())){
     Serial.println("Prepare Update RTC !");
+    RtcDateTime compiled = RtcDateTime(currentYear,currentMonth,monthDay,hour,mins,sec);
     if (isUpdated){
       Serial.println("Update RTC !");
       Rtc.SetDateTime(compiled);

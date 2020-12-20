@@ -30,7 +30,7 @@
 
 #include <RtcDS3231.h>
 
-#define MAX_TIME_UPDATE 6*60*60 // 6*60 mis update realtime //secs
+#define MAX_TIME_UPDATE 5*60  //60secs // 6*60*60 mis update realtime
 #define ADD_USE_TIMER 0x20  //  1 is use timer;
 #define ADD_HOUR_SET 0x20 + 1 // Address of eeprom
 #define ADD_MINS_SET 0x20 + 2

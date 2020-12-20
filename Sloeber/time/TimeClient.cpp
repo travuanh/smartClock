@@ -2,8 +2,8 @@
 #include "EEPROM.h"
 
 // CONNECTIONS:
-// DS3231 SDA --> SDA
-// DS3231 SCL --> SCL
+// DS3231 SDA --> SDA (D2)
+// DS3231 SCL --> SCL (D1)
 // DS3231 VCC --> 3.3v or 5v
 // DS3231 GND --> GND
 
