@@ -23,11 +23,11 @@ RtcDS3231<TwoWire> Rtc(Wire);
 #define countof(a) (sizeof(a) / sizeof(a[0]))
 
 const long utcOffsetInSeconds = 25200; //UTC +7
-char daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
-char daysOfTheWeekShort[7][12] = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
+const char daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
+const char daysOfTheWeekShort[7][12] = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
 
 //Month names
-String months[12]={"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
+const String months[12]={"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
 
 uint32_t timeUpdate = 0;
 uint32_t timeCount = MAX_TIME_UPDATE;
