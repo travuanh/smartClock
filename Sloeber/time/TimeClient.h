@@ -28,6 +28,12 @@
 
 #include <RtcDS3231.h>
 
+// CONNECTIONS:
+// DS3231 SDA --> SDA (D2)
+// DS3231 SCL --> SCL (D1)
+// DS3231 VCC --> 3.3v or 5v
+// DS3231 GND --> GND
+
 #if defined(ESP8266) || defined(ESP32)
 #include <functional>
 #define TIMECLIENT_CALLBACK_SIGNATURE std::function<void()> callback

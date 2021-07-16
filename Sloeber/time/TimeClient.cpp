@@ -1,12 +1,5 @@
 #include "TimeClient.h"
 #include "EEPROM.h"
-
-// CONNECTIONS:
-// DS3231 SDA --> SDA (D2)
-// DS3231 SCL --> SCL (D1)
-// DS3231 VCC --> 3.3v or 5v
-// DS3231 GND --> GND
-
 /* for software wire use below
 #include <SoftwareWire.h>  // must be included here so that Arduino library object file references work
 #include <RtcDS3231.h>

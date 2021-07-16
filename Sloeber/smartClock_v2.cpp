@@ -1,8 +1,6 @@
 // Do not remove the include below
 #include "smartClock_v2.h"
 
-
-
 #include <ESP8266WiFi.h>
 #include "config.h"
 #include "utils.h"
@@ -180,19 +178,21 @@ void setup()
 void loop()
 {
   if(WiFi.isConnected()){
-  #if LED_HEARTBEAT
-//    static uint32_t timeLast = 0;
-//
-//    if (millis() - timeLast >= HB_LED_TIME) {
-//      digitalWrite(HB_LED, digitalRead(HB_LED) == LOW ? HIGH : LOW);
-//      timeLast = millis();
-//    }
-    digitalWrite(HB_LED, LOW);
-  #endif
-//    handleWiFi();
+	  #if LED_HEARTBEAT
+	//    static uint32_t timeLast = 0;
+	//
+	//    if (millis() - timeLast >= HB_LED_TIME) {
+	//      digitalWrite(HB_LED, digitalRead(HB_LED) == LOW ? HIGH : LOW);
+	//      timeLast = millis();
+	//    }
+//		digitalWrite(HB_LED, LOW);
+		LED_ON;
+	  #endif
+	//    handleWiFi();
   }
   else{
-    digitalWrite(HB_LED, HIGH);
+//    digitalWrite(HB_LED, HIGH);
+    LED_OFF;
   }
 
   timeClient.loop();

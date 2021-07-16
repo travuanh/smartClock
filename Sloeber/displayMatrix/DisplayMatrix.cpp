@@ -472,14 +472,18 @@ void DisplayMatrix::timeTick (TimeClient &timeClient)
 
   PRINT("\ntimeDisplayCount: ", timeDisplayCount);
   timeDisplayCount++;
-  if(timeDisplayCount == 1)
-    {
-     blink = true;
-    }
+  if(timeDisplayCount == 1){
+	 blink = true;
+  }
+  if (eDisplayState != S_TIME){
+	  sprintf(Line[S_TIME].message," %02d:%02d", timeClient.getHour(), timeClient.getMins());
+  }
+
   switch (eDisplayState){
    case S_IDLE:
        //prepair data
      PRINT("\nS_IDLE: ", eDisplayState);
+     blink = true;
 //     sprintf(Line[S_IDLE].message," %02d:%02d", timeClient.getHour(), timeClient.getMins());
 //     Line[S_IDLE].newMessageAvailable = true;
      isRunning = true;
@@ -545,6 +549,7 @@ void DisplayMatrix::nextState ()
   {
     case S_IDLE:
       eDisplayState = S_TIME;
+//      sprintf(Line[S_TIME].message," %02d:%02d", timeClient.getHour(), timeClient.getMins());
 
       break;
 
@@ -565,7 +570,11 @@ void DisplayMatrix::nextState ()
       eDisplayState = S_TEMP;
       break;
     case S_TEMP:
-      eDisplayState = S_UPDATE;
+    	if(!updateMsg.isEmpty())
+    		eDisplayState = S_UPDATE;
+    	else
+    		eDisplayState = S_IDLE;
+
       break;
 
     case S_UPDATE:
@@ -587,9 +596,6 @@ void DisplayMatrix::nextState ()
   }
 
 }
-
-
-
 
 void DisplayMatrix::display ()
 {

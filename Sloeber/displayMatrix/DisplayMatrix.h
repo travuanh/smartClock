@@ -1,6 +1,5 @@
 #ifndef _DISPLAYMATRIX_H_
 #define _DISPLAYMATRIX_H_
-
 //
 #include <MD_MAX72xx.h>
 #include <SPI.h>

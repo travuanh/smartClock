@@ -20,6 +20,10 @@
 #define LED_HEARTBEAT 1
 #define HB_LED  LED_BUILTIN//D2
 
+
+#define LED_ON			digitalWrite(HB_LED, LOW);
+#define LED_OFF			digitalWrite(HB_LED, HIGH);
+
 #if DEBUG
 #define PRINT(s, v)   { Serial.print(F(s)); Serial.print(v); }        // Print a string followed by a value (decimal)
 #define PRINTX(s, v)  { Serial.print(F(s)); Serial.print(v, HEX); }   // Print a string followed by a value (hex)
