@@ -42,6 +42,11 @@
 			<locationURI>ECLIPSE_HOME/arduinoPlugin/packages/esp8266/hardware/esp8266/3.0.1/variants/nodemcu</locationURI>
 		</link>
 		<link>
+			<name>libraries/ArduinoJson</name>
+			<type>2</type>
+			<location>C:/Users/travu/Documents/Arduino/libraries/ArduinoJson</location>
+		</link>
+		<link>
 			<name>libraries/DNSServer</name>
 			<type>2</type>
 			<locationURI>ECLIPSE_HOME/arduinoPlugin/packages/esp8266/hardware/esp8266/3.0.1/libraries/DNSServer</locationURI>
@@ -62,9 +67,19 @@
 			<locationURI>ECLIPSE_HOME/arduinoPlugin/packages/esp8266/hardware/esp8266/3.0.1/libraries/ESP8266WiFi</locationURI>
 		</link>
 		<link>
+			<name>libraries/LittleFS</name>
+			<type>2</type>
+			<locationURI>ECLIPSE_HOME/arduinoPlugin/packages/esp8266/hardware/esp8266/3.0.1/libraries/LittleFS</locationURI>
+		</link>
+		<link>
 			<name>libraries/MD_MAX72XX</name>
 			<type>2</type>
 			<location>C:/Users/travu/Documents/Arduino/libraries/MD_MAX72XX</location>
+		</link>
+		<link>
+			<name>libraries/MD_UISwitch</name>
+			<type>2</type>
+			<locationURI>ECLIPSE_HOME/arduinoPlugin/libraries/MD_UISwitch/2.1.0</locationURI>
 		</link>
 		<link>
 			<name>libraries/NTPClient</name>

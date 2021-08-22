@@ -1,0 +1,13 @@
+doxygen/doxygen_new_line_after_brief=true
+doxygen/doxygen_use_brief_tag=false
+doxygen/doxygen_use_javadoc_tags=true
+doxygen/doxygen_use_pre_tag=false
+doxygen/doxygen_use_structural_commands=false
+eclipse.preferences.version=1
+environment/project/io.sloeber.core.toolChain.release.2106840368/PATH/delimiter=;
+environment/project/io.sloeber.core.toolChain.release.2106840368/PATH/operation=replace
+environment/project/io.sloeber.core.toolChain.release.2106840368/PATH/value=${A.COMPILER.PATH}${PathDelimiter}${A.BUILD.GENERIC.PATH}${PathDelimiter}${SystemRoot}\\system32${PathDelimiter}${SystemRoot}${PathDelimiter}${SystemRoot}\\system32\\Wbem${PathDelimiter}${sloeber_path_extension}
+environment/project/io.sloeber.core.toolChain.release.2106840368/append=true
+environment/project/io.sloeber.core.toolChain.release.2106840368/appendContributed=true
+environment/project/io.sloeber.core.toolChain.release.846856682/append=true
+environment/project/io.sloeber.core.toolChain.release.846856682/appendContributed=true

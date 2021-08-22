@@ -8,7 +8,7 @@
 #ifndef CONFIG_H_
 #define CONFIG_H_
 
-//#define DEBUG 	1
+//#define DEBUG 1
 #define USING_ECLIPSE
 
 

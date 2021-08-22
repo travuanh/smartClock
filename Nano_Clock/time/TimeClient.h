@@ -22,7 +22,6 @@
 #ifndef _TIMECLIENT_H_
 #define _TIMECLIENT_H_
 #include "RtcDS3231.h"
-#include "../configuration/MyConfig.h"
 
 
 // CONNECTIONS:
@@ -33,8 +32,6 @@
 
 #if defined(ESP8266) || defined(ESP32)
 #include <functional>
-#include <NTPClient.h>
-#include <WiFiUdp.h>
 #define TIMECLIENT_CALLBACK_SIGNATURE std::function<void()> callback
 #else
 //typedef  void (*callback)(void);
@@ -45,10 +42,10 @@
 #define ADD_USE_TIMER 0x20  //  1 is use timer;
 #define ADD_HOUR_SET 0x20 + 1 // Address of eeprom
 #define ADD_MINS_SET 0x20 + 2
-#define HOST_NTP "asia.pool.ntp.org"
+//#define HOST_NTP "asia.pool.ntp.org"
 
 #define SIZE_OF_DATETIME 15
-#define SIZE_OF_TEMP 8
+#define SIZE_OF_TEMP 7
 
 //currentYear,currentMonth,monthDay,hour,mins,sec
 typedef struct fDateTime {
@@ -65,30 +62,16 @@ private:
 	uint8_t hour;
 	uint8_t mins;
 	uint8_t sec;
-	bool _AM;
-	bool mode24H;
 
 	char fmTime[SIZE_OF_DATETIME]; //MON 01/20/2021
 	char fmTemp[SIZE_OF_TEMP]; //XX.XXC
-	WiFiUDP* ntpUDP;
-	NTPClient* timeClient;
-	fConfig* fPtr;
-
 
 	TIMECLIENT_CALLBACK_SIGNATURE;
 public:
-
-#if defined(ESP8266) || defined(ESP32)
-	TimeClient(WiFiUDP& ntpUDP);
 	TimeClient();
-	void setup(WiFiUDP& ntpUDP);
-#else
-	void setup();
-
-#endif
 //	TimeClient();
 	~TimeClient();
-
+	void setup();
 	void init();
 	void loop();
 	void setTimer(uint8_t hh, uint8_t mins);
@@ -97,16 +80,11 @@ public:
 	void initRTC();
 	void printDateTime(const RtcDateTime& dt);
 
-	bool bGetAM() {return _AM; };
-	bool bGgetMode24H() {return mode24H; };
-
 	uint8_t getHour() const;
 	void setHour(uint8_t hour);
 
 	uint8_t getMins() const;
 	void setMins(uint8_t mins);
-
-	void setfConfig(fConfig* ptr);
 
 	uint8_t getSec() const;
 	void setSec(uint8_t sec);
@@ -114,9 +92,9 @@ public:
 	TimeClient& setCallback(TIMECLIENT_CALLBACK_SIGNATURE);
 
 	const char* getTemp() const;
-
+//	void setTemp(const String &temp);
 	const char* getFmTime() const;
-
+//	void setFmTime(const String &fmTime);
 };
 
 #endif /* _TIMECLIENT_H_ */

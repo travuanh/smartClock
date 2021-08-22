@@ -14,7 +14,7 @@
 
 
 
-#define MAX_DISPLAY_TIME  45 // secs
+#define MAX_DISPLAY_TIME  10//45 // secs
 
 #define MAX_DISPLAY_DATE  5 //secs
 #define MAX_DISPLAY_TEMP  5 //secs
@@ -28,13 +28,6 @@
 
 #define MAX_TIME_TO_CONFIG_WIFI 180 //180 secs
 
-#define UNIT_DELAY      25
-#define ARROWR_DELAY    (8 * UNIT_DELAY)
-#define PACMAN_DELAY	(4 * UNIT_DELAY)
-#define SCANNER_DELAY   (2 * UNIT_DELAY)
-#define INVADER_DELAY   (6 * UNIT_DELAY)
-#define SINE_DELAY      (2 * UNIT_DELAY)
-#define SPECTRUM_DELAY  (4 * UNIT_DELAY)
 
 // Global message buffers shared by Wifi and Scrolling functions
 #define MESG_SIZE  75
@@ -78,14 +71,6 @@ public:
   void timeTick(TimeClient& timeClient);
   void bRestartDisplay(void);
   void vSetUpdateMsg(char* newMsg);
-  bool graphicArrowRotate(bool bInit);
-  bool graphicPacman(bool bInit);
-  bool graphicBounceBall(bool bInit);
-  bool graphicInvader(bool bInit);
-  bool graphicSinewave(bool bInit);
-  bool graphicSpectrum2(bool bInit);
-  bool graphicScroller(bool bInit);
-  void runWelcomeDisplay(void);
 
 };
 

@@ -11,7 +11,6 @@
 #include "../utils.h"
 #include <SPI.h>
 
-
 // IP address for the ESP8266 is displayed on the scrolling display
 // after startup initialisation and connected to the WiFi network.
 //
@@ -29,9 +28,9 @@
 
 // Arbitrary pins
 //MD_MAX72XX mx = MD_MAX72XX(DATA_PIN, CLK_PIN, CS_PIN, MAX_DEVICES);
-#define CLK_PIN   D5 // or SCK
-#define DATA_PIN  D7 // or MOSI
-#define CS_PIN    D8 // or SS
+#define CLK_PIN   D13 // or SCK
+#define DATA_PIN  D11 // or MOSI
+#define CS_PIN    SS // or SS
 
 static const char* DISPLAY_TAG = "Display";
 
@@ -46,7 +45,6 @@ struct LineDefinition  Line[MAX_LINE_MSG] ;
 #define HARDWARE_TYPE MD_MAX72XX::FC16_HW //MD_MAX72XX::PAROLA_HW  //edit this as per your LED matrix hardware type
 MD_MAX72XX mx = MD_MAX72XX(HARDWARE_TYPE, CS_PIN, MAX_DEVICES);
 
-uint32_t prevTimeAnim = 0;    // Used for remembering the millis() value in animations
 
 char curMessage[MESG_SIZE];
 //char newMessage[MESG_SIZE];
@@ -61,7 +59,7 @@ bool isRunning = true;
 bool newMessageAvailable =  false;
 uint32_t prevTime = 0;
 
-static bool bRestart = true;
+bool bRestart = true;
 
 //bool changeState = false;
 
@@ -79,7 +77,6 @@ DisplayMatrix::DisplayMatrix ()
 
 DisplayMatrix::~DisplayMatrix ()
 {
-
 }
 
 void DisplayMatrix::init ()
@@ -87,7 +84,6 @@ void DisplayMatrix::init ()
   // Display initialization
 //  PRINTS("\n->DisplayMatrix::init()");
   mx.begin();
-//  mx.control(MD_MAX72XX::WRAPAROUND, MD_MAX72XX::ON);
   mx.setShiftDataInCallback(scrollDataSource);
   mx.setShiftDataOutCallback(scrollDataSink);
 
@@ -419,10 +415,9 @@ void DisplayMatrix::nextState ()
   {
     case S_IDLE:
       eDisplayState = S_TIME;
-
-//      char tmp[20];
-//      sprintf(tmp," %s    ", Line[S_TIME].message);
-//      strcpy(Line[eDisplayState].message, tmp); // copy it in
+      char tmp[20];
+      sprintf(tmp," %s    ", Line[S_TIME].message);
+      strcpy(Line[eDisplayState].message, tmp); // copy it in
 
 //      sprintf(Line[S_TIME].message," %02d:%02d   ", timeClient.getHour(), timeClient.getMins());
 
@@ -435,7 +430,7 @@ void DisplayMatrix::nextState ()
     case S_TIME:
       if(isRunning)
       {
-//        isRunning = false;
+        isRunning = false;
         timeDisplayCount = 0;
 //        bRestart = true;
         return;
@@ -494,38 +489,26 @@ void DisplayMatrix::display ()
 bool DisplayMatrix::scrollText ()
 {
   // are we initializing?
-	static uint32_t idx = 0;
-	const uint8_t offset = 2; // there is space before text, hence + 3 offset
-	if (bRestart)
-	{
-	//    PRINTS("\n--- Initializing ScrollText");
-	//    resetMatrix();
-	//    strcpy(curMessage, pmsg);
-	bRestart = false;
-	}
+  if (bRestart)
+  {
+//    PRINTS("\n--- Initializing ScrollText");
+//    resetMatrix();
+//    strcpy(curMessage, pmsg);
+    bRestart = false;
+  }
 
-	// Is it time to scroll the text?
-	if (millis() - prevTime >= SCROLL_DELAY)
-	{
+  // Is it time to scroll the text?
+  if (millis() - prevTime >= SCROLL_DELAY)
+  {
 	  mx.transform(MD_MAX72XX::TSL);
-	  if(eDisplayState == S_TIME){
-		  idx++;
-		  if(idx == (mx.getColumnCount() + offset) ){
-			  idx = 0;
-//			  PRINTS("\n--- idx == mx.getColumnCount()");
-			  isRunning = false;
-		  }
-	  }else{
-		  idx = 0;
-	  }
-	//	  if(eDisplayState == S_IDLE)
-	//		  mx.transform(MD_MAX72XX::TSU);
-	//	  else
-	//		  mx.transform(MD_MAX72XX::TSL);  // scroll along - the callback will load all the data
+//	  if(eDisplayState == S_IDLE)
+//		  mx.transform(MD_MAX72XX::TSU);
+//	  else
+//		  mx.transform(MD_MAX72XX::TSL);  // scroll along - the callback will load all the data
 
-	prevTime = millis();      // starting point for next time
-	}
-	return (bRestart);
+    prevTime = millis();      // starting point for next time
+  }
+  return (bRestart);
 }
 
 void DisplayMatrix::resetMatrix(void)
@@ -534,324 +517,9 @@ void DisplayMatrix::resetMatrix(void)
   mx.control(MD_MAX72XX::INTENSITY, MAX_INTENSITY/2);
   mx.control(MD_MAX72XX::UPDATE, MD_MAX72XX::ON);
   mx.clear();
-  prevTime = 0;
 
 }
 
-bool DisplayMatrix::graphicBounceBall(bool bInit)
-{
-  static uint8_t  idx = 0;      // position
-  static int8_t   idOffs = 1;   // increment direction
-
-  // are we initializing?
-  if (bInit)
-  {
-    PRINTS("\n--- BounceBall init");
-    resetMatrix();
-    bInit = false;
-  }
-
-  // Is it time to animate?
-  if (millis()-prevTimeAnim < SCANNER_DELAY)
-    return(bInit);
-  prevTimeAnim = millis();    // starting point for next time
-
-  PRINT("\nBB R:", idx);
-  PRINT(" D:", idOffs);
-
-  // now run the animation
-  mx.control(MD_MAX72XX::UPDATE, MD_MAX72XX::OFF);
-
-  // turn off the old ball
-  mx.setColumn(idx, 0);
-  mx.setColumn(idx+1, 0);
-
-  idx += idOffs;
-  if ((idx == 0) || (idx == mx.getColumnCount()-2))
-    idOffs = -idOffs;
-
-  // turn on the new lines
-  mx.setColumn(idx, 0x18);
-  mx.setColumn(idx+1, 0x18);
-
-  mx.control(MD_MAX72XX::UPDATE, MD_MAX72XX::ON);
-
-  return(bInit);
-}
-
-bool DisplayMatrix::graphicPacman(bool bInit)
-{
-  #define MAX_FRAMES  4   // number of animation frames
-  #define PM_DATA_WIDTH  18
-  const uint8_t pacman[MAX_FRAMES][PM_DATA_WIDTH] =  // ghost pursued by a pacman
-  {
-    { 0x3c, 0x7e, 0x7e, 0xff, 0xe7, 0xc3, 0x81, 0x00, 0x00, 0x00, 0x00, 0xfe, 0x7b, 0xf3, 0x7f, 0xfb, 0x73, 0xfe },
-    { 0x3c, 0x7e, 0xff, 0xff, 0xe7, 0xe7, 0x42, 0x00, 0x00, 0x00, 0x00, 0xfe, 0x7b, 0xf3, 0x7f, 0xfb, 0x73, 0xfe },
-    { 0x3c, 0x7e, 0xff, 0xff, 0xff, 0xe7, 0x66, 0x24, 0x00, 0x00, 0x00, 0xfe, 0x7b, 0xf3, 0x7f, 0xfb, 0x73, 0xfe },
-    { 0x3c, 0x7e, 0xff, 0xff, 0xff, 0xff, 0x7e, 0x3c, 0x00, 0x00, 0x00, 0xfe, 0x7b, 0xf3, 0x7f, 0xfb, 0x73, 0xfe },
-  };
-
-  static int16_t idx;        // display index (column)
-  static uint8_t frame;      // current animation frame
-  static uint8_t deltaFrame; // the animation frame offset for the next frame
-
-  // are we initializing?
-  if (bInit)
-  {
-    PRINTS("\n--- Pacman init");
-    resetMatrix();
-    bInit = false;
-    idx = -1; //DATA_WIDTH;
-    frame = 0;
-    deltaFrame = 1;
-  }
-
-  // Is it time to animate?
-  if (millis() - prevTimeAnim < PACMAN_DELAY)
-    return(bInit);
-  prevTimeAnim = millis();    // starting point for next time
-
-  PRINT("\nPAC I:", idx);
-
-  mx.control(MD_MAX72XX::UPDATE, MD_MAX72XX::OFF);
-  mx.clear();
-
-  // clear old graphic
-  for (uint8_t i = 0; i<PM_DATA_WIDTH; i++)
-    mx.setColumn(idx - PM_DATA_WIDTH + i, 0);
-  // move reference column and draw new graphic
-  idx++;
-  for (uint8_t i = 0; i<PM_DATA_WIDTH; i++)
-    mx.setColumn(idx - PM_DATA_WIDTH + i, pacman[frame][i]);
-
-  // advance the animation frame
-  frame += deltaFrame;
-  if (frame == 0 || frame == MAX_FRAMES - 1)
-    deltaFrame = -deltaFrame;
-
-  // check if we are completed and set initialize for next time around
-  if (idx == mx.getColumnCount() + PM_DATA_WIDTH) bInit = true;
-
-  mx.control(MD_MAX72XX::UPDATE, MD_MAX72XX::ON);
-
-  return(bInit);
-}
-
-bool DisplayMatrix::graphicArrowRotate(bool bInit)
-{
-  static uint16_t idx;        // transformation index
-
-  uint8_t arrow[COL_SIZE] =
-  {
-    0b00000000,
-    0b00011000,
-    0b00111100,
-    0b01111110,
-    0b00011000,
-    0b00011000,
-    0b00011000,
-    0b00000000
-  };
-
-  MD_MAX72XX::transformType_t  t[] =
-  {
-    MD_MAX72XX::TRC, MD_MAX72XX::TRC,
-    MD_MAX72XX::TSR, MD_MAX72XX::TSR, MD_MAX72XX::TSR, MD_MAX72XX::TSR, MD_MAX72XX::TSR, MD_MAX72XX::TSR, MD_MAX72XX::TSR, MD_MAX72XX::TSR,
-    MD_MAX72XX::TRC, MD_MAX72XX::TRC,
-    MD_MAX72XX::TSL, MD_MAX72XX::TSL, MD_MAX72XX::TSL, MD_MAX72XX::TSL, MD_MAX72XX::TSL, MD_MAX72XX::TSL, MD_MAX72XX::TSL, MD_MAX72XX::TSL,
-    MD_MAX72XX::TRC,
-  };
-
-  // are we initializing?
-  if (bInit)
-  {
-    PRINTS("\n--- ArrowRotate init");
-    resetMatrix();
-    bInit = false;
-    idx = 0;
-
-    // use the arrow bitmap
-    mx.control(MD_MAX72XX::UPDATE, MD_MAX72XX::OFF);
-    for (uint8_t j = 0; j<mx.getDeviceCount(); j++)
-      mx.setBuffer(((j + 1)*COL_SIZE) - 1, COL_SIZE, arrow);
-    mx.control(MD_MAX72XX::UPDATE, MD_MAX72XX::ON);
-  }
-
-  // Is it time to animate?
-  if (millis() - prevTimeAnim < ARROWR_DELAY)
-    return(bInit);
-  prevTimeAnim = millis();    // starting point for next time
-
-  mx.control(MD_MAX72XX::WRAPAROUND, MD_MAX72XX::ON);
-  mx.transform(t[idx++]);
-  mx.control(MD_MAX72XX::WRAPAROUND, MD_MAX72XX::OFF);
-
-  // check if we are completed and set initialize for next time around
-  if (idx == (sizeof(t) / sizeof(t[0]))) bInit = true;
-
-  return(bInit);
-}
-
-bool DisplayMatrix::graphicInvader(bool bInit)
-{
-  const uint8_t invader1[] = { 0x0e, 0x98, 0x7d, 0x36, 0x3c };
-  const uint8_t invader2[] = { 0x70, 0x18, 0x7d, 0xb6, 0x3c };
-  const uint8_t dataSize = (sizeof(invader1)/sizeof(invader1[0]));
-
-  static int8_t idx;
-  static bool   iType;
-
-  // are we initializing?
-  if (bInit)
-  {
-    PRINTS("\n--- Invader init");
-    resetMatrix();
-    bInit = false;
-    idx = -dataSize;
-    iType = false;
-  }
-
-  // Is it time to animate?
-  if (millis()-prevTimeAnim < INVADER_DELAY)
-    return(bInit);
-  prevTimeAnim = millis();    // starting point for next time
-
-  // now run the animation
-  PRINT("\nINV I:", idx);
-
-  mx.control(MD_MAX72XX::UPDATE, MD_MAX72XX::OFF);
-  mx.clear();
-  for (uint8_t i=0; i<dataSize; i++)
-  {
-    mx.setColumn(idx-dataSize+i, iType ? invader1[i] : invader2[i]);
-    mx.setColumn(idx+dataSize-i-1, iType ? invader1[i] : invader2[i]);
-  }
-  idx++;
-  if (idx == mx.getColumnCount()+(dataSize*2)) bInit = true;
-  iType = !iType;
-  mx.control(MD_MAX72XX::UPDATE, MD_MAX72XX::ON);
-
-  return(bInit);
-}
-
-bool DisplayMatrix::graphicSinewave(bool bInit)
-{
-  static uint8_t curWave = 0;
-  static uint8_t idx;
-
-  #define SW_DATA_WIDTH  11    // valid data count followed by up to 10 data points
-  const uint8_t waves[][SW_DATA_WIDTH] =
-  {
-    {  9,   8,  6,   1,   6,  24,  96, 128,  96,  16,   0 },
-    {  6,  12,  2,  12,  48,  64,  48,   0,   0,   0,   0 },
-    { 10,  12,   2,   1,   2,  12,  48,  64, 128,  64, 48 },
-
-  };
-  const uint8_t WAVE_COUNT = sizeof(waves) / (SW_DATA_WIDTH * sizeof(uint8_t));
-
-  // are we initializing?
-  if (bInit)
-  {
-    PRINTS("\n--- Sinewave init");
-    resetMatrix();
-    bInit = false;
-    idx = 1;
-  }
-
-  // Is it time to animate?
-  if (millis() - prevTimeAnim < SINE_DELAY)
-    return(bInit);
-  prevTimeAnim = millis();    // starting point for next time
-
-  mx.control(MD_MAX72XX::WRAPAROUND, MD_MAX72XX::ON);
-  mx.transform(MD_MAX72XX::TSL);
-  mx.setColumn(0, waves[curWave][idx++]);
-  if (idx > waves[curWave][0])
-  {
-    curWave = random(WAVE_COUNT);
-    idx = 1;
-  }
-  mx.control(MD_MAX72XX::WRAPAROUND, MD_MAX72XX::OFF);
-
-  return(bInit);
-}
-
-bool DisplayMatrix::graphicSpectrum2(bool bInit)
-{
-  // are we initializing?
-  if (bInit)
-  {
-    PRINTS("\n--- Spectrum2init");
-    resetMatrix();
-    bInit = false;
-  }
-
-  // Is it time to animate?
-  if (millis() - prevTimeAnim < SPECTRUM_DELAY)
-    return(bInit);
-  prevTimeAnim = millis();    // starting point for next time
-
-  // now run the animation
-  mx.control(MD_MAX72XX::UPDATE, MD_MAX72XX::OFF);
-  for (uint8_t i = 0; i<mx.getColumnCount(); i++)
-  {
-    uint8_t r = random(ROW_SIZE);
-    uint8_t cd = 0;
-
-    for (uint8_t j = 0; j<r; j++)
-      cd |= 1 << j;
-
-    mx.setColumn(i, ~cd);
-  }
-  mx.control(MD_MAX72XX::UPDATE, MD_MAX72XX::ON);
-
-  return(bInit);
-}
-
-bool DisplayMatrix::graphicScroller(bool bInit)
-{
-  const uint8_t   width = 3;     // width of the scroll bar
-  const uint8_t   offset = mx.getColumnCount()/3;
-  static uint8_t  idx = 0;      // counter
-
-  // are we initializing?
-  if (bInit)
-  {
-    PRINTS("\n--- Scroller init");
-    resetMatrix();
-    idx = 0;
-    bInit = false;
-  }
-
-  // Is it time to animate?
-  if (millis()-prevTimeAnim < SCANNER_DELAY)
-    return(bInit);
-  prevTimeAnim = millis();    // starting point for next time
-
-  PRINT("\nS I:", idx);
-
-  // now run the animation
-  mx.control(MD_MAX72XX::UPDATE, MD_MAX72XX::OFF);
-
-  mx.transform(MD_MAX72XX::TSL);
-
-  mx.setColumn(0, idx>=0 && idx<width ? 0xff : 0);
-  if (++idx == offset) idx = 0;
-
-  mx.control(MD_MAX72XX::UPDATE, MD_MAX72XX::ON);
-
-  return(bInit);
-}
-
-void DisplayMatrix::runWelcomeDisplay(void){
-//	bRestart = graphicArrowRotate(bRestart);
-	bRestart = graphicPacman(bRestart);
-//	bRestart= graphicBounceBall(bRestart);
-//	bRestart= graphicInvader(bRestart);
-//	bRestart= graphicSinewave(bRestart);
-//	bRestart= graphicSpectrum2(bRestart);
-//	bRestart = graphicScroller(bRestart);
-}
 bool DisplayMatrix::printText (const char *pmsg)
 {
   // are we initializing?

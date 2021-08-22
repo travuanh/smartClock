@@ -16,12 +16,12 @@
 
 
 #define  PRINT_CALLBACK 0
-
 #define DEBUG 1
 
 #define LED_HEARTBEAT 1
 #define HB_LED  LED_BUILTIN//D2
 
+#define countof(a) (sizeof(a) / sizeof(a[0]))
 
 #define LED_ON			digitalWrite(HB_LED, LOW);
 #define LED_OFF			digitalWrite(HB_LED, HIGH);
